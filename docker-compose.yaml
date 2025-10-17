@@ -1,0 +1,60 @@
+# ABOUTME: Docker Compose configuration for running the Claude-Telegram notificator stack.
+# ABOUTME: Includes the API server and optional Redis for production deployments.
+
+services:
+  notificator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: claude-telegram-notificator
+    ports:
+      - "8000:8000"
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_ENABLED=${REDIS_ENABLED:-false}
+      - ENABLE_NOTIFICATIONS=${ENABLE_NOTIFICATIONS:-true}
+      - RESPONSE_TIMEOUT=${RESPONSE_TIMEOUT:-300}
+    volumes:
+      # Mount config directory for persistence
+      - ./data:/home/app/.claude-telegram
+    networks:
+      - claude-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  redis:
+    image: redis:7-alpine
+    container_name: claude-telegram-redis
+    ports:
+      - "6380:6379"  # Use different external port to avoid conflicts
+    volumes:
+      - redis-data:/data
+    networks:
+      - claude-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - production  # Only start Redis with: docker-compose --profile production up
+
+networks:
+  claude-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
