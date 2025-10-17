@@ -55,34 +55,34 @@ Get real-time notifications from Claude Code on your phone via Telegram! This to
 
 ### 2. Clone and Configure
 
-\`\`\`bash
+```bash
 git clone https://github.com/gonzaloacosta/claude-telegram-notificator.git
 cd claude-telegram-notificator
 cp .env.example .env
 nano .env
-\`\`\`
+```
 
 ### 3. Choose Your Deployment Method
 
 #### Option A: Docker Compose (Recommended)
 
-\`\`\`bash
+```bash
 docker-compose up -d
 docker-compose logs -f notificator
-\`\`\`
+```
 
 #### Option B: Local Development with uv
 
-\`\`\`bash
+```bash
 uv sync
 uv run python -m src.main
-\`\`\`
+```
 
 ### 4. Install Claude Hooks
 
-\`\`\`bash
+```bash
 ./hooks/install-hooks.sh
-\`\`\`
+```
 
 ### 5. Test It Out
 
@@ -94,7 +94,7 @@ uv run python -m src.main
 
 ### Managing Projects
 
-\`\`\`bash
+```bash
 # List all projects
 curl http://localhost:8000/projects
 
@@ -104,7 +104,7 @@ curl -X POST "http://localhost:8000/projects/add?project_path=/path/to/project&n
 # Disable/Enable notifications
 curl -X POST "http://localhost:8000/projects/%2Fpath%2Fto%2Fproject/disable"
 curl -X POST "http://localhost:8000/projects/%2Fpath%2Fto%2Fproject/enable"
-\`\`\`
+```
 
 ### Telegram Commands
 
@@ -113,14 +113,14 @@ curl -X POST "http://localhost:8000/projects/%2Fpath%2Fto%2Fproject/enable"
 
 ## Development
 
-\`\`\`bash
+```bash
 # Run tests
 uv run pytest
 
 # Format and lint
 uv run ruff format .
 uv run ruff check .
-\`\`\`
+```
 
 ## License
 
