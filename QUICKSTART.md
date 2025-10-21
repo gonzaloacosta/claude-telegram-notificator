@@ -47,7 +47,7 @@ The setup script will:
 
 ```bash
 # Check if service is running
-curl http://localhost:8000/health
+curl http://localhost:9999/health
 
 # View logs
 docker-compose logs -f notificator  # for Docker

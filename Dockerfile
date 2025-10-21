@@ -44,11 +44,11 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="/app"
 
 # Expose API port
-EXPOSE 8000
+EXPOSE 9999
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:9999/health || exit 1
 
 # Run the application using uv (ensures venv is used)
 CMD ["uv", "run", "python", "-m", "src.main"]

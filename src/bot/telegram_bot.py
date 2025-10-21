@@ -145,7 +145,7 @@ class TelegramBot:
 
         Args:
             chat_id: Telegram chat ID to send to
-            message: Message text to send
+            message: Message text to send (already formatted)
             session_id: Optional session ID for tracking responses
             requires_response: Whether to wait for user response
 
@@ -154,9 +154,6 @@ class TelegramBot:
         """
         if not self.app:
             raise RuntimeError("Bot is not started")
-
-        # Format message with emoji
-        formatted_message = f"🤖 **Claude Code Notification**\n\n{message}"
 
         # Create inline keyboard if response is required
         reply_markup = None
@@ -172,7 +169,7 @@ class TelegramBot:
         # Send message
         await self.app.bot.send_message(
             chat_id=chat_id,
-            text=formatted_message,
+            text=message,
             reply_markup=reply_markup,
             parse_mode="Markdown",
         )

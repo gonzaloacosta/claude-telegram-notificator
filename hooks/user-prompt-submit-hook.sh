@@ -8,35 +8,42 @@
 # - STDIN: Contains the prompt content
 
 # Configuration
-API_URL="${CLAUDE_TELEGRAM_API_URL:-http://localhost:8000}"
+API_URL="${CLAUDE_TELEGRAM_API_URL:-http://localhost:9999}"
 PROJECT_PATH="${CLAUDE_PROJECT_PATH:-$(pwd)}"
 PROJECT_NAME="$(basename "$PROJECT_PATH")"
 
 # Read the prompt from stdin
 PROMPT=$(cat)
 
+# Return the original prompt unchanged (must happen before background task)
+echo "$PROMPT"
+
 # Only send notification if prompt is substantial (more than 10 chars)
 if [ ${#PROMPT} -lt 10 ]; then
-  echo "$PROMPT"
   exit 0
 fi
 
-# Prepare notification message
-MESSAGE="📝 New prompt submitted in project: **${PROJECT_NAME}**\n\nPrompt preview: ${PROMPT:0:200}..."
-
-# Send to API (non-blocking, don't wait for response)
-curl -s -X POST "${API_URL}/hooks/event" \
-  -H "Content-Type: application/json" \
-  -d "{
-        \"hook_type\": \"user-prompt-submit\",
-        \"project_path\": \"${PROJECT_PATH}\",
-        \"project_name\": \"${PROJECT_NAME}\",
-        \"message\": \"${MESSAGE}\",
-        \"requires_response\": false,
-        \"context\": {
-            \"prompt_length\": ${#PROMPT}
+# Send to API (non-blocking, properly detached)
+# Use jq to properly escape JSON values
+(JSON_PAYLOAD=$(jq -n \
+    --arg hook_type "user-prompt-submit" \
+    --arg project_path "$PROJECT_PATH" \
+    --arg project_name "$PROJECT_NAME" \
+    --argjson prompt_length "${#PROMPT}" \
+    '{
+        hook_type: $hook_type,
+        project_path: $project_path,
+        project_name: $project_name,
+        message: "",
+        requires_response: false,
+        context: {
+            prompt_length: $prompt_length
         }
-    }" &
+    }')
 
-# Return the original prompt unchanged
-echo "$PROMPT"
+curl -s -X POST "${API_URL}/hooks/event" \
+    -H "Content-Type: application/json" \
+    -d "$JSON_PAYLOAD" > /dev/null 2>&1 &)
+
+# Exit successfully
+exit 0

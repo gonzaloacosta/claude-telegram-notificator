@@ -13,6 +13,8 @@ class HookType(str, Enum):
     USER_PROMPT_SUBMIT = "user-prompt-submit"
     ASSISTANT_MESSAGE = "assistant-message"
     TOOL_USE = "tool-use"
+    NOTIFICATION = "notification"
+    STOP = "stop"
     CUSTOM = "custom"
 
 

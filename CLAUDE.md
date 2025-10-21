@@ -24,7 +24,7 @@ This is a Python-based notification system that bridges Claude Code with Telegra
 uv sync
 
 # Run the server (development mode with reload)
-uv run uvicorn src.api.app:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn src.api.app:app --reload --host 0.0.0.0 --port 9999
 
 # Run the server (production mode)
 uv run python -m src.main
@@ -64,7 +64,7 @@ docker-compose down
 docker-compose up -d --build
 
 # Check service health
-curl http://localhost:8000/health
+curl http://localhost:9999/health
 ```
 
 ## Architecture
@@ -152,7 +152,7 @@ Claude Code hooks are bash scripts that:
 3. Return the original data unchanged
 
 The hooks use environment variables:
-- `CLAUDE_TELEGRAM_API_URL`: API endpoint (default: http://localhost:8000)
+- `CLAUDE_TELEGRAM_API_URL`: API endpoint (default: http://localhost:9999)
 - `CLAUDE_PROJECT_PATH`: Current project path
 - `CLAUDE_HOOK_TYPE`: Type of hook being triggered
 
@@ -247,13 +247,13 @@ Required environment variables (see `.env.example`):
 - `TELEGRAM_CHAT_ID`: From `/start` command with bot
 
 Optional but recommended:
-- `API_PORT`: Default 8000
+- `API_PORT`: Default 9999
 - `ENABLE_NOTIFICATIONS`: Master switch
 - `RESPONSE_TIMEOUT`: Default 300 seconds
 
 ## Debugging Tips
 
-1. **Check service health**: `curl http://localhost:8000/health`
+1. **Check service health**: `curl http://localhost:9999/health`
 2. **View bot status**: Send `/status` to Telegram bot
 3. **Test hooks manually**: `echo "test" | ~/.claude/hooks/user-prompt-submit-hook`
 4. **Check project config**: `cat ~/.claude-telegram/projects.json`

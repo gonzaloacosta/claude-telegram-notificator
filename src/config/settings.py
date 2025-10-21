@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     # Server settings
     api_host: str = Field(default="0.0.0.0", description="API server host")
-    api_port: int = Field(default=8000, description="API server port")
+    api_port: int = Field(default=9999, description="API server port")
     api_reload: bool = Field(default=False, description="Enable auto-reload in dev")
 
     # Telegram settings

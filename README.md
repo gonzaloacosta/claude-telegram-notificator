@@ -96,14 +96,14 @@ uv run python -m src.main
 
 ```bash
 # List all projects
-curl http://localhost:8000/projects
+curl http://localhost:9999/projects
 
 # Add a project
-curl -X POST "http://localhost:8000/projects/add?project_path=/path/to/project&name=MyProject"
+curl -X POST "http://localhost:9999/projects/add?project_path=/path/to/project&name=MyProject"
 
 # Disable/Enable notifications
-curl -X POST "http://localhost:8000/projects/%2Fpath%2Fto%2Fproject/disable"
-curl -X POST "http://localhost:8000/projects/%2Fpath%2Fto%2Fproject/enable"
+curl -X POST "http://localhost:9999/projects/%2Fpath%2Fto%2Fproject/disable"
+curl -X POST "http://localhost:9999/projects/%2Fpath%2Fto%2Fproject/enable"
 ```
 
 ### Telegram Commands

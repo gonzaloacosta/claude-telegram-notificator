@@ -15,6 +15,27 @@ from src.models import HookEvent, HookResponse, ResponseType
 logger = logging.getLogger(__name__)
 
 
+def format_notification_message(event: HookEvent) -> str:
+    """
+    Format a hook event into a simple, clean message.
+    Format: $PROJECT | $HOOK_TYPE | $MESSAGE
+
+    Args:
+        event: The hook event to format
+
+    Returns:
+        Formatted message string
+    """
+    project_name = event.project_name or event.project_path.split("/")[-1]
+    hook_type = event.hook_type.replace("-", " ").title()
+
+    # Simple format: PROJECT | HOOK_TYPE | MESSAGE
+    if event.message and len(event.message.strip()) > 0:
+        return f"**{project_name}** | {hook_type}\n\n{event.message}"
+    else:
+        return f"**{project_name}** | {hook_type}"
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application lifecycle (startup/shutdown)."""
@@ -97,10 +118,13 @@ async def receive_hook_event(event: HookEvent):
     session_id = event.session_id or str(uuid.uuid4())
 
     try:
+        # Format the message for Telegram
+        formatted_message = format_notification_message(event)
+
         # Send notification to Telegram
         telegram_response = await telegram_bot.send_notification(
             chat_id=chat_id,
-            message=event.message,
+            message=formatted_message,
             session_id=session_id,
             requires_response=event.requires_response,
         )
